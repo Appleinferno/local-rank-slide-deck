@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deck Builder · Butter First</title>
+  <link rel="stylesheet" href="form.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">Butter<span>First</span> · Deck Builder</div>
+  <div class="header-actions">
+    <a href="deck.html" class="btn-ghost" id="view-last-btn" style="display:none">View Last Deck →</a>
+  </div>
+</header>
+
+<main>
+  <h1 class="page-title">Build a Pitch Deck</h1>
+  <p class="page-sub">Fill in your research below and click Generate — Claude builds the data, we render the deck.</p>
+
+  <!-- API Key -->
+  <details class="api-panel" id="api-details">
+    <summary>⚙ Anthropic API Key</summary>
+    <div class="api-panel-body">
+      <label for="api-key">API Key</label>
+      <input type="password" id="api-key" placeholder="sk-ant-..." autocomplete="off">
+      <span class="api-key-note">Stored in your browser only · never sent anywhere except Anthropic</span>
+    </div>
+  </details>
+
+  <form id="deck-form" novalidate>
+
+    <!-- 1. Business Basics -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">01</span>
+        <span class="section-title">Business Basics</span>
+      </div>
+      <div class="field-grid" style="grid-template-columns: 1fr 1fr 1fr 120px 130px;">
+        <div class="field">
+          <label>Business Name</label>
+          <input type="text" name="businessName" placeholder="Apex Hardwood Flooring" required>
+        </div>
+        <div class="field">
+          <label>Market (City, ST)</label>
+          <input type="text" name="market" placeholder="Austin, TX" required>
+        </div>
+        <div class="field">
+          <label>Service Area Population</label>
+          <input type="number" name="population" placeholder="285000" required min="1000">
+        </div>
+        <div class="field">
+          <label>Brand Color</label>
+          <div class="color-field">
+            <input type="color" id="brand-color-picker" value="#1e40af">
+            <input type="text" name="brandColor" id="brand-color-hex" placeholder="#1e40af" maxlength="7">
+          </div>
+        </div>
+        <div class="field">
+          <label>Avg Job Value ($)</label>
+          <input type="number" name="aov" placeholder="3500" required min="1">
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Services + Keywords -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">02</span>
+        <span class="section-title">Services + Keyword Clusters</span>
+        <span class="section-hint">National monthly volumes from DataForSEO / Ahrefs</span>
+      </div>
+      <div class="dynamic-list" id="services-list"></div>
+      <button type="button" class="add-btn" id="add-service-btn">+ Add Service</button>
+    </div>
+
+    <!-- 3. Towns -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">03</span>
+        <span class="section-title">Towns in Service Area</span>
+        <span class="section-hint">Primary city first</span>
+      </div>
+      <div class="dynamic-list" id="towns-list"></div>
+      <button type="button" class="add-btn" id="add-town-btn">+ Add Town</button>
+    </div>
+
+    <!-- 4. Site Issues -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">04</span>
+        <span class="section-title">Site Issues</span>
+        <span class="section-hint">4–5 from your audit / discovery call</span>
+      </div>
+      <div class="dynamic-list" id="issues-list"></div>
+      <button type="button" class="add-btn" id="add-issue-btn">+ Add Issue</button>
+    </div>
+
+    <!-- 5. Competitors -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">05</span>
+        <span class="section-title">Competitors</span>
+        <span class="section-hint">Include the client's current metrics as one row</span>
+      </div>
+      <div class="dynamic-list" id="competitors-list"></div>
+      <button type="button" class="add-btn" id="add-comp-btn">+ Add Competitor</button>
+    </div>
+
+    <!-- 6. Overrides -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-num">06</span>
+        <span class="section-title">Optional Overrides</span>
+        <span class="section-hint">Leave blank for defaults</span>
+      </div>
+      <div class="field-grid cols-3">
+        <div class="field">
+          <label>Blended CTR (default 0.05)</label>
+          <input type="number" name="ctr" placeholder="0.05" step="0.01" min="0" max="1">
+        </div>
+        <div class="field">
+          <label>Conversion Rate (default 0.25)</label>
+          <input type="number" name="convRate" placeholder="0.25" step="0.01" min="0" max="1">
+        </div>
+        <div class="field">
+          <label>Monthly Budget (default $2,500)</label>
+          <input type="text" name="budget" placeholder="$2,500">
+        </div>
+      </div>
+    </div>
+
+    <!-- Error -->
+    <div class="error-msg" id="error-msg"></div>
+
+    <!-- Generate -->
+    <button type="submit" class="btn-primary" id="generate-btn">
+      Generate Pitch Deck
+    </button>
+
+  </form>
+
+  <!-- Manual paste -->
+  <div class="or-divider">or paste a DECK JSON you already generated</div>
+  <div class="paste-zone">
+    <label>Paste DECK JSON (the full object from the MASTER PROMPT output)</label>
+    <textarea id="paste-json" placeholder='{"meta": {...}, "issues": [...], ...}'></textarea>
+    <button type="button" class="btn-sm" id="load-json-btn">Load Deck →</button>
+  </div>
+
+</main>
+
+<!-- Loading overlay -->
+<div class="loading-overlay hidden" id="loading">
+  <div class="spinner"></div>
+  <div class="loading-title">Building your deck<span class="loading-dots"></span></div>
+  <div class="loading-sub">Claude is crunching the numbers and writing the copy. Usually takes 15–30 seconds.</div>
+</div>
+
+<script src="form.js"></script>
+</body>
+</html>
