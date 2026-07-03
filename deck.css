@@ -599,3 +599,68 @@ tr.row-leader td:first-child { border-left: 2px solid #d97706; padding-left: cal
 .no-data h2 { font-size: 1.5rem; color: var(--text); font-weight: 700; }
 .no-data a { color: var(--brand); text-decoration: none; }
 .no-data a:hover { text-decoration: underline; }
+
+/* ══════════════════════════════════════
+   MOBILE
+   Rescales the root font-size so every rem-based
+   value in this file shrinks proportionally, then
+   patches the handful of layouts that don't stack
+   on their own (4-col timeline, side-by-side panels,
+   the enlarged nav pill).
+══════════════════════════════════════ */
+@media (max-width: 768px) {
+  html { font-size: 14px; }
+
+  .slide { padding: 2.25rem 6% 5.5rem; }
+  .slide-inner { max-width: 100%; }
+
+  .cover-inner { padding: 0 7%; }
+  .cover-title { font-size: clamp(2.1rem, 9vw, 3rem); }
+  .cover-lede { font-size: clamp(1rem, 4.2vw, 1.15rem); max-width: 100%; }
+  .cover-footer { flex-direction: column; align-items: flex-start; gap: 0.4rem; left: 7%; right: 7%; }
+
+  .slide-title { font-size: clamp(1.6rem, 7vw, 2.2rem); margin-bottom: 1.5rem; }
+
+  .issues-grid { grid-template-columns: 1fr; }
+
+  .geo-layout, .proj-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  .geo-map-wrap { max-width: 260px; margin: 0 auto; }
+
+  .tl-cards {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+  .tl-cards::before { display: none; }
+
+  .comp-table { font-size: 0.85rem; }
+
+  #chart-clusters { height: 240px; }
+  #chart-ramp { height: 220px; }
+
+  .budget-row { flex-direction: column; align-items: flex-start; }
+  .budget-sprint { text-align: left; }
+
+  /* Nav pill was sized for a large presentation display — shrink it
+     back down so it doesn't dominate a phone screen or overflow width. */
+  #nav {
+    bottom: 0.75rem;
+    gap: 0.6rem;
+    padding: 0.5rem 0.9rem;
+  }
+  .nav-btn {
+    font-size: 1.3rem;
+    padding: 0.4rem 0.55rem;
+    border-radius: 10px;
+  }
+  .nav-dots { gap: 0.4rem; }
+  .dot { width: 7px; height: 7px; }
+  .dot.active { width: 20px; border-radius: 4px; }
+  #slide-counter { font-size: 0.8rem; min-width: 30px; }
+
+  #topbar { padding: 0.6rem 1rem; }
+  .deck-brand { font-size: 0.6rem; }
+  #fullscreen-btn { display: none; }
+}
